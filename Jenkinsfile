@@ -59,7 +59,8 @@ spec:
                     sh """
                     /kaniko/executor --context=${WORKSPACE} \
                                      --dockerfile=${WORKSPACE}/Dockerfile \
-                                     --destination=${HARBOR_REGISTRY}/${PROJECT_NAME}/${APP_NAME}:${IMAGE_TAG}
+                                     --destination=${HARBOR_REGISTRY}/${PROJECT_NAME}/${APP_NAME}:${IMAGE_TAG} \
+                                     --skip-tls-verify
                     """
                 }
             }
