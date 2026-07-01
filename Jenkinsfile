@@ -14,7 +14,7 @@ spec:
     command: ['cat']
     tty: true
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
+    image: gcr.io/kaniko-project/executor:v1.23.0
     command: ['cat']
     tty: true
 '''
@@ -46,7 +46,6 @@ spec:
                 container('kaniko') {
                     echo 'Iniciando a construção da imagem com o Kaniko...'
                     
-                    // Criamos o diretório interno padrão do Kaniko para receber as credenciais dinâmicas
                     sh 'mkdir -p /kaniko/.docker'
                     
                     withCredentials([usernamePassword(credentialsId: "${HARBOR_CRED_ID}", usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASSWORD')]) {
