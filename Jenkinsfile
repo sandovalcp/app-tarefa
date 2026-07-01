@@ -10,12 +10,12 @@ metadata:
 spec:
   containers:
   - name: maven
-    image: maven:3.9.6-eclipse-temurin-17
+    image: docker.io/library/maven:3.9.6-eclipse-temurin-17
     command: ['cat']
     tty: true
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.23.0
-    command: ['cat']
+    image: docker.io/gcr.io/kaniko-project/executor:v1.23.0-debug
+    command: ['/busybox/cat']
     tty: true
 '''
         }
@@ -46,7 +46,7 @@ spec:
                 container('kaniko') {
                     echo 'Iniciando a construção da imagem com o Kaniko...'
                     
-                    sh 'mkdir -p /kaniko/.docker'
+                    sh '/busybox/mkdir -p /kaniko/.docker'
                     
                     withCredentials([usernamePassword(credentialsId: "${HARBOR_CRED_ID}", usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASSWORD')]) {
                         sh """
