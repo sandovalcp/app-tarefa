@@ -1,32 +1,24 @@
-# ==========================================
-# Etapa 1: Compilação da aplicação Java
-# ==========================================
-FROM maven:3.9.6-eclipse-temurin-17 AS builder
+# Estágio 1: Build da aplicação com Maven
+FROM docker.io/library/maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copia o arquivo de definição de dependências
+# Copia o pom.xml e baixa as dependências (otimização de cache)
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Copia todo o código-fonte do projeto
+# Copia o código fonte e realiza o empacotamento
 COPY src ./src
-
-# Executa o build do Maven gerando o arquivo .war final e pulando os testes unitários
 RUN mvn clean package -DskipTests
 
-# ==========================================
-# Etapa 2: Imagem final leve para execução
-# ==========================================
-FROM tomcat:10.1-jdk17-temurin
+# Estágio 2: Ambiente de execução com Tomcat 9 (Java 8)
+FROM docker.io/library/tomcat:9.0-jre8-alpine
 WORKDIR /usr/local/tomcat
 
-# Remove as aplicações padrão do Tomcat para otimizar espaço e segurança
+# Limpa os aplicativos padrão do Tomcat
 RUN rm -rf webapps/*
 
-# Copia o arquivo .war gerado na Etapa 1 para o diretório de deploy do Tomcat
-# Renomeamos para ROOT.war para que a aplicação responda diretamente na raiz (/) do servidor
-COPY --from=builder /app/target/*.war ./webapps/ROOT.war
+# Copia cirurgicamente o war gerado no estágio anterior eliminando o wildcard problemático
+COPY --from=builder /app/target/todo-tomcat-k8s.war ./webapps/ROOT.war
 
-# Expõe a porta padrão do servidor Tomcat
 EXPOSE 8080
-
-# O comando de inicialização padrão já vem configurado na imagem base do Tomcat (catalina.sh run)
+CMD ["catalina.sh", "run"]
