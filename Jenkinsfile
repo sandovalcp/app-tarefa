@@ -14,9 +14,11 @@ spec:
     command: ['cat']
     tty: true
   - name: kaniko
-    image: docker.io/gcr.io/kaniko-project/executor:v1.23.0-debug
+    image: gcr.io/kaniko-project/executor:v1.23.0-debug
     command: ['/busybox/cat']
     tty: true
+  - name: jnlp
+    image: docker.io/jenkins/inbound-agent:3355.v388858a_47b_33-3-jdk21
 '''
         }
     }
