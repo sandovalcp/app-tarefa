@@ -1,0 +1,9 @@
+# Arquivos temporários
+*~
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
