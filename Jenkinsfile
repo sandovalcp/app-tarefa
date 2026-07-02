@@ -23,6 +23,8 @@ spec:
     volumeMounts:
     - name: workspace-volume
       mountPath: /home/jenkins/agent
+    - name: registry-creds
+      mountPath: /kaniko/.docker
   - name: jnlp
     image: docker.io/jenkins/inbound-agent:3355.v388858a_47b_33-3-jdk21
     volumeMounts:
@@ -31,6 +33,12 @@ spec:
 volumes:
 - name: workspace-volume
   emptyDir: {}
+- name: registry-creds
+  secret:
+    secretName: harbor-cred
+    items:
+    - key: .dockerconfigjson
+      path: config.json
 '''
         }
     }
@@ -47,7 +55,6 @@ volumes:
         stage('Build & Push Imagem (Kaniko)') {
             steps {
                 container('kaniko') {
-                    // Alterado o destino para usar o host do Ingress correto e adicionada a flag para permitir HTTP plano se o seu Ingress não usar HTTPS
                     sh '''
                     /kaniko/executor \
                       --context=dir://. \
