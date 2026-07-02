@@ -48,7 +48,7 @@ volumes:
             steps {
                 container('kaniko') {
                     sh '''
-                    /busybox/executor \
+                    /kaniko/executor \
                       --context=dir://. \
                       --dockerfile=Dockerfile \
                       --destination=harbor.search.tec.br/infra/app-tarefa:${BUILD_NUMBER}
