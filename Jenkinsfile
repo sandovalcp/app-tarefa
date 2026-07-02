@@ -23,6 +23,11 @@ spec:
     volumeMounts:
     - name: workspace-volume
       mountPath: /home/jenkins/agent
+  - name: jnlp
+    image: docker.io/jenkins/inbound-agent:3355.v388858a_47b_33-3-jdk21
+    volumeMounts:
+    - name: workspace-volume
+      mountPath: /home/jenkins/agent
 volumes:
 - name: workspace-volume
   emptyDir: {}
@@ -42,7 +47,6 @@ volumes:
         stage('Build & Push Imagem (Kaniko)') {
             steps {
                 container('kaniko') {
-                    // O comando 'true' ao final garante que o shell retorne status 0 ao Jenkins de forma explícita
                     sh '''
                     /busybox/executor \
                       --context=dir://. \
@@ -56,7 +60,6 @@ volumes:
         
         stage('Push Helm Chart to CD Repo') {
             steps {
-                // Seu bloco existente que gerencia o clone do Git e o push no repositório de CD
                 echo "Atualizando repositório de CD com a tag ${BUILD_NUMBER}..."
             }
         }
