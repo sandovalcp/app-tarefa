@@ -47,11 +47,14 @@ volumes:
         stage('Build & Push Imagem (Kaniko)') {
             steps {
                 container('kaniko') {
+                    // Alterado o destino para usar o host do Ingress correto e adicionada a flag para permitir HTTP plano se o seu Ingress não usar HTTPS
                     sh '''
                     /kaniko/executor \
                       --context=dir://. \
                       --dockerfile=Dockerfile \
-                      --destination=harbor.search.tec.br/infra/app-tarefa:${BUILD_NUMBER}
+                      --destination=ingress-lab.search.tec.br/infra/app-tarefa:${BUILD_NUMBER} \
+                      --insecure \
+                      --skip-tls-verify
                     true
                     '''
                 }
